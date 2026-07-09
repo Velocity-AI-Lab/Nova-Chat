@@ -8,11 +8,6 @@ export const getGeminiChat = asyncHandler(
     // get the conversation Id and message from user
     const { conversationId, content } = req.body;
     // check if both exists or not, if not throw error
-    if (!conversationId) {
-      return res.status(400).json({
-        error: "Conversation Id is required",
-      });
-    }
     if (!content) {
       return res.status(400).json({
         error: "Content is required",
