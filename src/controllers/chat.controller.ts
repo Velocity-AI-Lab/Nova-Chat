@@ -6,15 +6,15 @@ import { ApiResponse } from "../utils/apiResponse";
 export const getGeminiChat = asyncHandler(
   async (req: Request, res: Response) => {
     // get the conversation Id and message from user
-    const { conversationId, content } = req.body;
+    const { conversationId, message } = req.body;
     // check if both exists or not, if not throw error
-    if (!content) {
+    if (!message) {
       return res.status(400).json({
         error: "Content is required",
       });
     }
     // call the service
-    const geminiResponse = await getGeminiChatService(conversationId, content);
+    const geminiResponse = await getGeminiChatService(conversationId, message);
     // give back the response to the client
     res
       .status(200)
