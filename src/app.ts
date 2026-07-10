@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from "express";
+import chatRoutes from "../src/routes/chat.routes";
 
 export const app = express();
 
@@ -11,3 +12,6 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running 🚀");
 });
+
+// Routes
+app.use("/api/v1", chatRoutes);
