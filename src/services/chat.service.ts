@@ -1,4 +1,5 @@
 import { gemini } from "../config/gemini.";
+import { healthSystemPrompt } from "../prompts";
 import type { Message } from "../types/message.types";
 
 // Create a Map to store the chat
@@ -26,7 +27,7 @@ export const getGeminiChatService = async (
   });
   // Step 5 - convert chat into Gemini format
   const contents = history.map((msg) => ({
-    role: "msg.role",
+    role: msg.role,
     parts: [
       {
         text: msg.content,
@@ -37,6 +38,9 @@ export const getGeminiChatService = async (
   const response = await gemini.models.generateContent({
     model: "gemini-3.5-flash",
     contents,
+    config: {
+      systemInstruction: healthSystemPrompt,
+    },
   });
   // Step 7 - Extract the reply from gemini response
   const reply = response.text ?? "";
