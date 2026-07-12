@@ -35,6 +35,7 @@ export const getGeminiChatService = async (
     ],
   }));
   // Step 6 - Call Gemini
+
   const response = await gemini.models.generateContent({
     model: "gemini-3.5-flash",
     contents,
@@ -42,6 +43,7 @@ export const getGeminiChatService = async (
       systemInstruction: healthSystemPrompt,
     },
   });
+
   // Step 7 - Extract the reply from gemini response
   const reply = response.text ?? "";
   // Step 8 - push reply to the chat
