@@ -1,4 +1,3 @@
-import { isComputedPropertyName } from "typescript";
 import { behaviorPrompt } from "./behaviour.prompt";
 import { identityPrompt } from "./identity.prompt";
 import { medicalSafetyPrompt } from "./medicalSafety.prompt";
