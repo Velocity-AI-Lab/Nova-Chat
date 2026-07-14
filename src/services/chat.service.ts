@@ -1,21 +1,5 @@
 import { gemini } from "../config/gemini.";
 import { healthSystemPrompt } from "../prompts";
-import { behaviorPrompt } from "../prompts/behaviour.prompt";
-import { communicationPrompt } from "../prompts/communication.prompt";
-import { formattingPrompt } from "../prompts/formatting.prompt";
-import { identityPrompt } from "../prompts/identity.prompt";
-import { limitationsPrompt } from "../prompts/limitations.prompt";
-import { medicalSafetyPrompt } from "../prompts/medicalSafety.prompt";
-import { memoryPrompt } from "../prompts/memory.prompt";
-import { mensHealthPrompt } from "../prompts/mensHealth.prompt";
-import { missionPrompt } from "../prompts/mission.prompt";
-import { nutritionPrompt } from "../prompts/nutrition.prompt";
-import { reasoningPrompt } from "../prompts/reasoning.prompt";
-import { recoveryPrompt } from "../prompts/recovery.prompt";
-import { sexualHealthPrompt } from "../prompts/sexualHealth.prompt";
-import { supplementsPrompt } from "../prompts/supplements.prompt";
-import { womensHealthPrompt } from "../prompts/womensHealth.prompt";
-import { workoutPrompt } from "../prompts/workout.prompt";
 import type { Message } from "../types/message.types";
 
 // Create a Map to store the chat
@@ -54,22 +38,6 @@ export const getGeminiChatService = async (
 
   console.log("History Message:", history.length);
 
-  // console.log("identity", identityPrompt.length);
-  // console.log("behavior", behaviorPrompt.length);
-  // console.log("medicalSafety", medicalSafetyPrompt.length);
-  // console.log("memory", memoryPrompt.length);
-  // console.log("mensHealth", mensHealthPrompt.length);
-  // console.log("mission", missionPrompt.length);
-  // console.log("nutrition", nutritionPrompt.length);
-  // console.log("reasoning", reasoningPrompt.length);
-  // console.log("recovery", recoveryPrompt.length);
-  // console.log("sexualHealth", sexualHealthPrompt.length);
-  // console.log("supplements", supplementsPrompt.length);
-  // console.log("womensHealth", womensHealthPrompt.length);
-  // console.log("workout", workoutPrompt.length);
-  // console.log("communication", communicationPrompt.length);
-  // console.log("formatting", formattingPrompt.length);
-  // console.log("limitations", limitationsPrompt.length);
   console.time("Gemini");
 
   const payload = JSON.stringify(contents);
@@ -78,25 +46,32 @@ export const getGeminiChatService = async (
   console.log("Payload Size:", payload.length);
   console.log("System Prompt:", healthSystemPrompt.length);
 
-  const response = await gemini.models.generateContent({
-    model: "gemini-3.5-flash",
-    contents,
-    config: {
-      systemInstruction: healthSystemPrompt,
-    },
-  });
+  try {
+    const response = await gemini.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents,
+      config: {
+        systemInstruction: healthSystemPrompt,
+        httpOptions: {
+          timeout: 15000,
+          retryOptions: { attempts: 2 },
+        },
+      },
+    });
 
-  console.timeEnd("Gemini");
-  // Step 7 - Extract the reply from gemini response
-  const reply = response.text ?? "";
-  // Step 8 - push reply to the chat
-  history.push({
-    role: "model",
-    content: reply,
-  });
-  // step 9 - return the data
-  return {
-    conversationId,
-    reply,
-  };
+    console.timeEnd("Gemini");
+
+    const reply = response.text ?? "";
+    history.push({ role: "model", content: reply });
+
+    return { conversationId, reply };
+  } catch (err) {
+    console.timeEnd("Gemini");
+    console.error("Gemini API error:", err);
+    return {
+      conversationId,
+      reply:
+        "I'm having trouble responding right now — please try again in a moment.",
+    };
+  }
 };
