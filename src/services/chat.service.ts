@@ -1,31 +1,45 @@
 import { gemini } from "../config/gemini.";
-import { healthSystemPrompt } from "../prompts";
+import { getSystemPrompt } from "../prompts/prompt.router";
 import type { Message } from "../types/message.types";
 
-// Create a Map to store the chat
+// Temporary in-memory conversation store.
+// Key = conversationId
+// Value = complete chat history for that conversation.
+// NOTE: This is only for the MVP. Later this will be replaced by MongoDB.
 const conversations = new Map<string, Message[]>();
 
 export const getGeminiChatService = async (
   conversationId: string | undefined,
   message: string,
 ) => {
-  // Step 1 - Check if the conversation id exists or not, if not create new one
+  // STEP 1:
+  // If this is the user's first message, generate a new conversation ID.
+  // Otherwise continue the existing conversation.
   if (!conversationId) {
     conversationId = crypto.randomUUID();
   }
-  // Step 2 - if conversation id exist then get the existing chat
+
+  // STEP 2:
+  // Try to retrieve previous chat history for this conversation.
   let history = conversations.get(conversationId);
-  // Step 3 - if previous chat doesn't exists then create new chat
+
+  // STEP 3:
+  // If no history exists, initialize a new conversation.
   if (!history) {
     history = [];
     conversations.set(conversationId, history);
   }
-  // Step 4 - add the message to chat like push the chat
+
+  // STEP 4:
+  // Save the user's latest message into the conversation history.
+  // This allows Gemini to maintain conversational context.
   history.push({
     role: "user",
     content: message,
   });
-  // Step 5 - convert chat into Gemini format
+
+  // STEP 5:
+  // Convert our internal Message format into Gemini's expected format.
   const contents = history.map((msg) => ({
     role: msg.role,
     parts: [
@@ -34,24 +48,29 @@ export const getGeminiChatService = async (
       },
     ],
   }));
-  // Step 6 - Call Gemini
 
-  console.log("History Message:", history.length);
+  // STEP 6:
+  // Build a dynamic system prompt.
+  // The router includes only the prompts relevant to the user's message,
+  // reducing prompt size compared to sending every prompt every time.
+  const systemPrompt = getSystemPrompt(message);
 
+  // Debug logs for development.
+  console.log("History Messages:", history.length);
+  console.log("Contents:", contents.length);
+  console.log("System Prompt Size:", systemPrompt.length);
+
+  // Measure Gemini response time.
   console.time("Gemini");
 
-  const payload = JSON.stringify(contents);
-
-  console.log("Contents:", contents.length);
-  console.log("Payload Size:", payload.length);
-  console.log("System Prompt:", healthSystemPrompt.length);
-
   try {
+    // STEP 7:
+    // Send the conversation and system prompt to Gemini.
     const response = await gemini.models.generateContent({
       model: "gemini-3.5-flash",
       contents,
       config: {
-        systemInstruction: healthSystemPrompt,
+        systemInstruction: systemPrompt,
         httpOptions: {
           timeout: 15000,
           retryOptions: { attempts: 2 },
@@ -61,13 +80,30 @@ export const getGeminiChatService = async (
 
     console.timeEnd("Gemini");
 
+    // STEP 8:
+    // Extract Gemini's reply.
     const reply = response.text ?? "";
-    history.push({ role: "model", content: reply });
 
-    return { conversationId, reply };
+    // STEP 9:
+    // Store Gemini's response in the conversation history so
+    // future requests retain conversational context.
+    history.push({
+      role: "model",
+      content: reply,
+    });
+
+    // STEP 10:
+    // Return both the conversation ID and the generated reply.
+    return {
+      conversationId,
+      reply,
+    };
   } catch (err) {
     console.timeEnd("Gemini");
+
     console.error("Gemini API error:", err);
+
+    // Return a fallback message instead of exposing internal errors.
     return {
       conversationId,
       reply:
