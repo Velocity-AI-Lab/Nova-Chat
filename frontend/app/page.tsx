@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { MessageBubble } from "@/components/messageBubble";
+import { ChatInput } from "@/components/chatInput";
 
 export default function Home() {
   return (
     <>
-      {" "}
       <div className="p-4 space-y-2">
         <MessageBubble
           message={{
@@ -20,6 +20,7 @@ export default function Home() {
           }}
         />
       </div>
+      <ChatInput />
     </>
   );
 }
