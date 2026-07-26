@@ -1,11 +1,13 @@
-import Image from "next/image";
+"use client";
+
 import { MessageBubble } from "@/components/messageBubble";
 import { ChatInput } from "@/components/chatInput";
+import { Sidebar } from "@/components/sidebar";
 
 export default function Home() {
   return (
     <>
-      <div className="p-4 space-y-2">
+      {/* <div className="p-4 space-y-2">
         <MessageBubble
           message={{
             role: "user",
@@ -20,7 +22,27 @@ export default function Home() {
           }}
         />
       </div>
-      <ChatInput />
+      <ChatInput /> */}
+      <Sidebar
+        conversations={[
+          {
+            id: "1",
+            title: "How to prepare for React interview",
+            messages: [],
+            updatedAt: Date.now(),
+          },
+          {
+            id: "2",
+            title: "Creatine benefits explained",
+            messages: [],
+            updatedAt: Date.now(),
+          },
+        ]}
+        activeId="1"
+        onSelect={(id) => console.log("selected", id)}
+        onDelete={(id) => console.log("deleted", id)}
+        onNewChat={() => console.log("new chat")}
+      />
     </>
   );
 }
