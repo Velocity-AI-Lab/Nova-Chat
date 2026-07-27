@@ -22,8 +22,9 @@
   --color-moss-soft: var(--color-moss-soft);
   --color-coral: var(--color-coral);
   --color-line: var(--color-line);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-space-grotesk);
+  --font-inter: var(--font-inter);
+  --font-spaceGrotesk: var(--font-space-grotesk);
+  --font-bitCount: var(--font-bitCountDouble);
 }
 
 body {

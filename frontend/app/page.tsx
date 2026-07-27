@@ -27,7 +27,7 @@ export default function Home() {
         conversations={[
           {
             id: "1",
-            title: "How to prepare for React interview",
+            title: "How to prepare for React interview and become richie rich",
             messages: [],
             updatedAt: Date.now(),
           },
