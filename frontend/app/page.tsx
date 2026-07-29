@@ -1,48 +1,49 @@
 "use client";
 
-import { MessageBubble } from "@/components/messageBubble";
 import { ChatInput } from "@/components/chatInput";
+import { MessageBubble } from "@/components/messageBubble";
 import { Sidebar } from "@/components/sidebar";
+import { useConversations } from "@/hooks/useConverstaion";
 
 export default function Home() {
+  // get the useConversation hook
+  const {
+    conversations,
+    loader,
+    createConversation,
+    getConversation,
+    deleteConversation,
+    updateConversation,
+  } = useConversations();
+
   return (
     <>
-      {/* <div className="p-4 space-y-2">
-        <MessageBubble
-          message={{
-            role: "user",
-            content: "Hey Nova, how much protein do I need?",
-          }}
+      <div className="flex h-screen">
+        <Sidebar
+          conversations={[]}
+          activeId={null}
+          onSelect={() => {}}
+          onDelete={() => {}}
+          onNewChat={() => {}}
         />
-        <MessageBubble
-          message={{
-            role: "model",
-            content:
-              "Roughly 1.6–2.2g per kg of bodyweight if you're training regularly.",
-          }}
-        />
+
+        <main className="flex-1 flex flex-col">
+          <div className="flex-1 flex items-center justify-center overflow-y-auto thin-scroll px-4 py-6">
+            <div className=" text-center">
+              <h2 className="font-spaceGrotesk text-3xl text-foreground">
+                What&apos;s on your mind today?
+              </h2>
+              <p className="mt-1 text-sm text-ink-soft font-inter">
+                Training, nutrition, recovery — ask away.
+              </p>
+            </div>
+          </div>
+
+          <div className="mx-auto w-full">
+            <ChatInput onSend={() => {}} disabled={false} />
+          </div>
+        </main>
       </div>
-      <ChatInput /> */}
-      <Sidebar
-        conversations={[
-          {
-            id: "1",
-            title: "How to prepare for React interview and become richie rich",
-            messages: [],
-            updatedAt: Date.now(),
-          },
-          {
-            id: "2",
-            title: "Creatine benefits explained",
-            messages: [],
-            updatedAt: Date.now(),
-          },
-        ]}
-        activeId="1"
-        onSelect={(id) => console.log("selected", id)}
-        onDelete={(id) => console.log("deleted", id)}
-        onNewChat={() => console.log("new chat")}
-      />
     </>
   );
 }

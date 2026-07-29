@@ -26,8 +26,8 @@ export const ChatInput = ({
 
   return (
     <>
-      <div className="border-t border-line bg-background px-4 py-3">
-        <div className="mx-auto flex max-w-2xl items-end gap-2 rounded-xl border border-line bg-surface px-3 py-2">
+      <div className=" bg-background px-4 py-3">
+        <div className=" mx-auto max-w-4xl flex items-end gap-2 rounded-xl border border-line bg-surface px-3 py-2">
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
@@ -39,7 +39,7 @@ export const ChatInput = ({
             }}
             placeholder="Ask me anything..."
             rows={3}
-            className="min-h-18 max-h-52 flex-1 resize-none bg-transparent py-1.5 text-sm text-foreground outline-none placeholder:text-ink-soft"
+            className="min-h-18 max-h-52  flex-1 resize-none bg-transparent py-1.5 text-sm text-foreground outline-none placeholder:text-ink-soft"
             style={{ fieldSizing: "content" }}
           />
           <button
