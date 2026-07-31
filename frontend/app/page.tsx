@@ -56,7 +56,7 @@ export default function Home() {
           conversations={conversations}
           activeId={activeId}
           onSelect={handleSelect}
-          onDelete={() => {}}
+          onDelete={handleDelete}
           onNewChat={handleNewChat}
         />
 

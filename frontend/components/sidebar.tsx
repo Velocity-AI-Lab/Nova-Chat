@@ -40,7 +40,7 @@ export const Sidebar = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="md:hidden fixed top-4 left-4 z-30 flex h-9 w-9 items-center justify-center rounded-lg bg-surface border border-line text-foreground"
+          className="md:hidden fixed top-8 left-6 z-30 flex h-9 w-9 items-center justify-center rounded-lg bg-surface border border-line text-foreground"
           aria-label="Open sidebar"
         >
           <PanelLeft size={18} strokeWidth={1} />
