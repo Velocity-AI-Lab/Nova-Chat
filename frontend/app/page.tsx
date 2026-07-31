@@ -4,6 +4,8 @@ import { ChatInput } from "@/components/chatInput";
 import { MessageBubble } from "@/components/messageBubble";
 import { Sidebar } from "@/components/sidebar";
 import { useConversations } from "@/hooks/useConverstaion";
+import { Message } from "@/types/types";
+import { useState } from "react";
 
 export default function Home() {
   // get the useConversation hook
@@ -15,14 +17,26 @@ export default function Home() {
     deleteConversation,
     updateConversation,
   } = useConversations();
+  // states
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [isThinking, setIsThinking] = useState<boolean>(false);
+  const [draftMessage, setDraftMessage] = useState<Message | null>(null);
+
+  // Derived Values
+  const activeConversation = activeId ? getConversation(activeId) : null;
+
+  // handle select function
+  const handleSelect = (conversationId: string) => {
+    setActiveId(conversationId);
+  };
 
   return (
     <>
       <div className="flex h-screen">
         <Sidebar
-          conversations={[]}
-          activeId={null}
-          onSelect={() => {}}
+          conversations={conversations}
+          activeId={activeId}
+          onSelect={handleSelect}
           onDelete={() => {}}
           onNewChat={() => {}}
         />
