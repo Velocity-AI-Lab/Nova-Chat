@@ -30,6 +30,25 @@ export default function Home() {
     setActiveId(conversationId);
   };
 
+  // handle new chat function
+  const handleNewChat = () => {
+    setActiveId(null);
+    setIsThinking(false);
+    setDraftMessage(null);
+  };
+
+  // handle delete conversation function
+  const handleDelete = (conversationId: string) => {
+    // delete the conersation
+    deleteConversation(conversationId);
+    // check if the current conversation is active or not
+    if (conversationId === activeId) {
+      setActiveId(null);
+      setIsThinking(false);
+      setDraftMessage(null);
+    }
+  };
+
   return (
     <>
       <div className="flex h-screen">
@@ -38,7 +57,7 @@ export default function Home() {
           activeId={activeId}
           onSelect={handleSelect}
           onDelete={() => {}}
-          onNewChat={() => {}}
+          onNewChat={handleNewChat}
         />
 
         <main className="flex-1 flex flex-col">
