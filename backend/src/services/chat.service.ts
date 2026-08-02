@@ -55,65 +55,7 @@ export const getGeminiChatService = async (
   // The router includes only the prompts relevant to the user's message,
   // reducing prompt size compared to sending every prompt every time.
 
-  console.time("Build Prompt");
   const systemPrompt = getSystemPrompt(message);
-  console.timeEnd("Build Prompt");
-
-  // Debug logs for development.
-  console.log("History Messages:", history.length);
-  console.log("Contents:", contents.length);
-  console.log("System Prompt Size:", systemPrompt.length);
-
-  // Measure Gemini response time.
-  console.time("Gemini");
-
-  // try {
-  //   // STEP 7:
-  //   // Send the conversation and system prompt to Gemini.
-  //   const response = await gemini.models.generateContent({
-  //     model: "gemini-3.5-flash",
-  //     contents,
-  //     config: {
-  //       systemInstruction: systemPrompt,
-  //       httpOptions: {
-  //         timeout: 15000,
-  //         retryOptions: { attempts: 2 },
-  //       },
-  //     },
-  //   });
-
-  //   console.timeEnd("Gemini");
-
-  //   // STEP 8:
-  //   // Extract Gemini's reply.
-  //   const reply = response.text ?? "";
-
-  //   // STEP 9:
-  //   // Store Gemini's response in the conversation history so
-  //   // future requests retain conversational context.
-  //   history.push({
-  //     role: "model",
-  //     content: reply,
-  //   });
-
-  //   // STEP 10:
-  //   // Return both the conversation ID and the generated reply.
-  //   return {
-  //     conversationId,
-  //     reply,
-  //   };
-  // } catch (err) {
-  //   console.timeEnd("Gemini");
-
-  //   console.error("Gemini API error:", err);
-
-  //   // Return a fallback message instead of exposing internal errors.
-  //   return {
-  //     conversationId,
-  //     reply:
-  //       "I'm having trouble responding right now — please try again in a moment.",
-  //   };
-  // }
 
   // Step 7 - Send the conversation and system prompt to Gemini
   let lastError: unknown;
@@ -157,6 +99,14 @@ export const getGeminiChatService = async (
       // get the status from the error
       const status = error.status;
 
+      // check if the error status is 429 from server then daily token limit is used
+      if (status === 429) {
+        throw {
+          status: 429,
+          message: "Daily Tokem limit has been used. Please try again later!",
+        };
+      }
+
       // check if the error status is from server side then try different model
       if ([500, 502, 503, 504].includes(status)) {
         console.log("Trying next fallback model");
@@ -167,8 +117,12 @@ export const getGeminiChatService = async (
     }
   }
   // if all models failed to responsed then return the error
-  return {
-    conversationId,
-    reply: "Nova is temporarliy unavavailable. Please try again later!",
-  };
+  if (lastError) {
+    throw lastError;
+  } else {
+    throw {
+      status: 503,
+      message: "Nova is temporarily unavailable. Please try again later!",
+    };
+  }
 };
