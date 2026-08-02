@@ -91,7 +91,11 @@ export default function Home() {
       setDraftMessage(null);
     } catch (error) {
       // diplay the error
-      setError("Something went wrong. Try again Later!");
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Something went wrong. Try again Later!");
+      }
     } finally {
       // after evrything set is thinking to false but keep the draft message there
       setIsThinking(false);
@@ -111,17 +115,19 @@ export default function Home() {
 
         <main className="flex-1 flex flex-col">
           {/* Chat messages  */}
-          <div className="flex-1 flex items-center justify-center overflow-y-auto thin-scroll px-4 py-6">
+          <div className="flex-1 overflow-y-auto thin-scroll px-4 py-6">
             {/* check if the conversation drfat message and is thinking exists or not, if not then show home screen otherwise show chat */}
 
             {!activeConversation && !draftMessage && !isThinking ? (
-              <div className=" text-center">
-                <h2 className="font-spaceGrotesk text-3xl text-foreground">
-                  What&apos;s on your mind today?
-                </h2>
-                <p className="mt-1 text-sm text-ink-soft font-inter">
-                  Training, nutrition, recovery — ask away.
-                </p>
+              <div className="flex h-full items-center justify-center">
+                <div className=" text-center">
+                  <h2 className="font-spaceGrotesk text-3xl text-foreground">
+                    What&apos;s on your mind today?
+                  </h2>
+                  <p className="mt-1 text-sm text-ink-soft font-inter">
+                    Training, nutrition, recovery — ask away.
+                  </p>
+                </div>
               </div>
             ) : (
               <div className="max-w-3xl mx-auto space-y-4">

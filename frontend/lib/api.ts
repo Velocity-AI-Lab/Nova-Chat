@@ -15,7 +15,9 @@ export const sendMessage = async (message: string, conversationId?: string) => {
     // return the response data
     return response?.data?.data;
   } catch (error) {
-    // throw error if the response doesn't exist
-    throw error;
+    // get the error from api reponse if there any
+    if (axios.isAxiosError(error)) {
+      throw new Error(error?.response?.data?.message);
+    }
   }
 };
