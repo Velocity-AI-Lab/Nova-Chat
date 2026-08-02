@@ -2,6 +2,7 @@ import express, { type Request, type Response } from "express";
 import chatRoutes from "../src/routes/chat.routes";
 import { corsOption } from "./config/cors.config";
 import cors from "cors";
+import { globalErrorHnadler } from "./middleware/globalError.middleware";
 
 export const app = express();
 
@@ -19,3 +20,6 @@ app.get("/", (req: Request, res: Response) => {
 
 // Routes
 app.use("/api/v1/", chatRoutes);
+
+// Global error middleware
+app.use(globalErrorHnadler);

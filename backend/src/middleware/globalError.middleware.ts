@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 
-export const globalError = (
+export const globalErrorHnadler = (
   err: any,
   req: Request,
   res: Response,
