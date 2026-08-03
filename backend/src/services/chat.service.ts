@@ -70,7 +70,7 @@ export const getGeminiChatService = async (
         config: {
           systemInstruction: systemPrompt,
           httpOptions: {
-            timeout: 15000,
+            timeout: 30000,
             retryOptions: {
               attempts: 2,
             },
@@ -93,6 +93,13 @@ export const getGeminiChatService = async (
         reply,
       };
     } catch (error: any) {
+      console.error("========== GEMINI ERROR ==========");
+      console.error(error);
+      console.error("Name:", error?.name);
+      console.error("Message:", error?.message);
+      console.error("Status:", error?.status);
+      console.error("Stack:", error?.stack);
+      console.error("==================================");
       // check if the any error comes then update the error
       lastError = error;
 
